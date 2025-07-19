@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منتجات المتجر</title>
+    <link rel="stylesheet"
+        href="A:\web_training\GraduationProject-20250711T164155Z-1-001\Ammar Emad Zewain\css\product_page.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="store-container">
+            <header class="store-header">
+                <h1 class="store-title">منتجات المتجر</h1>
+                <div class="header-controls">
+
+                    <select class="sort-select">
+                        <option value="newest">الأحدث أولاً</option>
+                        <option value="price-low">الأقل سعراً</option>
+                        <option value="price-high">الأعلى سعراً</option>
+                    </select>
+                    <select class="category-select">
+                        <option value="">جميع الفئات</option>
+                        <option value="electronics">إلكترونيات</option>
+                        <option value="clothes">ملابس</option>
+                        <option value="books">كتب</option>
+                    </select>
+                    <button class="add-product-btn">+ إضافة منتج</button>
+                </div>
+            </header>
+
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="image-placeholder">📱</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">هاتف ذكي متطور</h3>
+                        <p class="product-description">شاشة 6.7 بوصة، كاميرا 108MP، بطارية 5000mAh</p>
+                        <div class="product-price">$799</div>
+                        <button class="add-to-cart-btn">إضافة للسلة</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="image-placeholder">💻</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">لابتوب فائق السرعة</h3>
+                        <p class="product-description">معالج i9، شاشة 32GB RAM، 1TB SSD</p>
+                        <div class="product-price">$1899</div>
+                        <button class="add-to-cart-btn">إضافة للسلة</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="image-placeholder">🎧</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">سماعات لاسلكية</h3>
+                        <p class="product-description">تقنية إلغاء الضوضاء، بطارية 30 ساعة</p>
+                        <div class="product-price">$249</div>
+                        <button class="add-to-cart-btn">إضافة للسلة</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="image-placeholder">📚</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">كتاب البرمجة المتقدمة</h3>
+                        <p class="product-description">أحدث تقنيات البرمجة وتطوير التطبيقات</p>
+                        <div class="product-price">$39</div>
+                        <button class="add-to-cart-btn">إضافة للسلة</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">←</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

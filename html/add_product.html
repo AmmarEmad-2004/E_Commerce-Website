@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة منتج جديد</title>
+    <link rel="stylesheet" href="A:\web_training\GraduationProject-20250711T164155Z-1-001\Ammar Emad Zewain\css\add_product.css">
+</head>
+<body>
+    <div class="add-product-container">
+        <h1 class="title">إضافة منتج جديد</h1>
+        
+        <form>
+            <div class="form-group">
+                <label class="label">اسم المنتج</label>
+                <input type="text" class="input-field">
+            </div>
+            
+            <div class="form-group">
+                <label class="label">السعر ($)</label>
+                <input type="number" class="input-field price-input">
+            </div>
+            
+            <div class="form-group">
+                <label class="label">الفئة</label>
+                <select class="select-field">
+                    <option value="">إلكترونيات</option>
+                    <option value="clothes">ملابس</option>
+                    <option value="books">كتب</option>
+                    <option value="home">منزل</option>
+                    <option value="sports">رياضة</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="label">وصف المنتج</label>
+                <textarea class="textarea-field" rows="4"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="label">صورة المنتج</label>
+                <input type="file" class="file-input">
+            </div>
+            
+            <button type="submit" class="add-btn">إضافة المنتج</button>
+        </form>
+    </div>
+</body>
+</html>
