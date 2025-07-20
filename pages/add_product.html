@@ -14,7 +14,7 @@
     <div class="add-product-container">
         <nav class="main-nav">
             <ul class="nav-links">
-                <li><a href="/index.html" class="nav-link active">الرئيسية</a></li>
+                <li id="home"><a href="#" class="nav-link active">الرئيسية</a></li>
                 <li id="auth"><a href="pages/login.html" class="nav-link">تسجيل الدخول</a></li>
                 <li id="auth"><a href="pages/sign_up.html" class="nav-link">إنشاء حساب</a></li>
             </ul>
@@ -59,9 +59,10 @@
     </div>
     <script type="module">
         import { db, collection, addDoc, serverTimestamp } from '../js/firebase.config.js';
-
+        import { navigate } from '../js/utils.js';
         document.addEventListener("DOMContentLoaded", () => {
             const authLink = document.querySelectorAll("#auth");
+            const homeLink = document.querySelector("#home");
             if (!localStorage.getItem("accessToken")) {
                 authLink.forEach(link => {
                     link.style.display = "block";
@@ -71,6 +72,10 @@
                     link.style.display = "none";
                 });
             }
+            homeLink.addEventListener("click", () => {
+                navigate();
+            });
+
             console.log("Database instance:", db);
             console.log("Database type:", typeof db);
 
