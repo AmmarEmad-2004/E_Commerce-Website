@@ -15,31 +15,76 @@
         <form>
             <div class="form-group">
                 <label class="label">الاسم الكامل</label>
-                <input type="text" class="input-field">
+                <input type="text" class="input-field" id="signup-name">
             </div>
 
             <div class="form-group">
                 <label class="label">البريد الإلكتروني</label>
-                <input type="email" class="input-field">
+                <input type="email" class="input-field" id="signup-email">
             </div>
 
             <div class="form-group">
                 <label class="label">كلمة المرور</label>
-                <input type="password" class="input-field">
+                <input type="password" class="input-field" id="signup-password">
             </div>
 
             <div class="form-group">
                 <label class="label">تأكيد كلمة المرور</label>
-                <input type="password" class="input-field">
+                <input type="password" class="input-field" id="signup-confirm-password">
             </div>
 
-            <button type="submit" class="signup-btn">إنشاء حساب</button>
+            <button type="button" class="signup-btn" id="createAccount">إنشاء حساب</button>
         </form>
 
         <div class="login-text">
-            لديك حساب بالفعل؟ <a href="#" class="login-link">سجل الدخول</a>
+            لديك حساب بالفعل؟ <a href="login.html" class="login-link">سجل الدخول</a>
         </div>
+
+        <div id="signup-success" style="color: green; margin-top: 10px;"></div>
+        <div id="signup-error" style="color: red; margin-top: 10px;"></div>
     </div>
+    <script type="module">
+        import { auth } from "../js/firebase.config.js";
+        import {
+            createUserWithEmailAndPassword,
+            updateProfile,
+        } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+        const creatAccountBtn = document.getElementById('createAccount')
+
+        creatAccountBtn.addEventListener("click", () => signUp())
+
+        function signUp() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const pass = document.getElementById('signup-password').value;
+            const confirmPass = document.getElementById('signup-confirm-password').value
+
+            const signupsuccess = document.getElementById('signup-success')
+            const signupErrore = document.getElementById('signup-error')
+
+            console.log(auth);
+
+            createUserWithEmailAndPassword(auth, email, pass)
+                .then((userCredential) => {
+                    console.log(userCredential.user);
+
+                    updateProfile(userCredential.user, {
+                        displayName: name,
+                    })
+                    console.log(userCredential.user);
+                    signupsuccess.innerHTML += "تم التسجيل بنجاح"
+                    setTimeout(() => location.href = window.location.origin, 1500)
+                }).catch((err) => {
+                    switch (err.code) {
+                        case 'auth/email-already-in-use':
+                            signupErrore.innerHTML += "حسابك مسجل عندنا";
+                            break;
+                        default: alert(err)
+                    }
+                });
+        }
+    </script>
 </body>
 
 </html>

@@ -1,44 +1,81 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول</title>
     <link rel="stylesheet" href="../styles/login.css">
+    <script type="module" src="../js/script.js"></script>
 </head>
+
 <body>
 
     <div class="login-container">
 
         <h1 class="title">تسجيل الدخول إلى المتجر</h1>
-        
+
 
         <form>
-         
+
             <div class="form-group">
                 <label class="label">البريد الإلكتروني</label>
-                <input type="email" class="input-field">
+                <input type="email" id="login-email" class="input-field">
             </div>
-            
+
             <div class="form-group">
                 <label class="label">كلمة المرور</label>
-                <input type="password" class="input-field">
+                <input type="password" id="login-password" class="input-field">
             </div>
-            
-            <button type="submit" class="login-btn">تسجيل الدخول</button>
+
+            <button id="signInBtn" class="login-btn">تسجيل الدخول</button>
         </form>
-        
+
         <div class="social-text">أو سجل باستخدام</div>
-        
+
         <div class="social-buttons">
-            <button class="social-btn google-btn">G</button>
+            <button onclick="signInWithGoogle" class="social-btn google-btn">G</button>
             <button class="social-btn facebook-btn">f</button>
-            
+
         </div>
-        
+
         <div class="signup-text">
-            ليس لديك حساب؟ <a href="#" class="signup-link">سجل الآن</a>
+            ليس لديك حساب؟ <a href="sign_up.html" class="signup-link">سجل الآن</a>
         </div>
     </div>
+    <script type="module" src="../js/firebase.config.js"></script>
+    <script type="module">
+        import { auth } from "../js/firebase.config.js";
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+        const signInBtn = document.getElementById("signInBtn");
+
+        signInBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            signIn();
+        });
+
+        function signIn() {
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+
+            signInWithEmailAndPassword(auth, email, password).then((user) => {
+                console.log(user);
+
+                setTimeout(() => navigate('index.html'), 1500)
+
+            }).catch((error) => {
+                console.log(error.message);
+                alert(error.code)
+            });
+        }
+
+        function navigate(path) {
+            location.href = window.location.origin;
+        }
+
+    </script>
 </body>
+
 </html>
