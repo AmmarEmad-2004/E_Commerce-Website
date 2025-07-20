@@ -63,16 +63,20 @@
             signInWithEmailAndPassword(auth, email, password).then((user) => {
                 console.log(user);
 
-                setTimeout(() => navigate('index.html'), 1500)
+                setTimeout(() => location.href = window.location.origin, 1500);
 
             }).catch((error) => {
-                console.log(error.message);
-                alert(error.code)
+                alert(error.message)
             });
         }
-
-        function navigate(path) {
-            location.href = window.location.origin;
+        function navigate() {
+            const origin = window.location.origin;
+            console.log(origin);
+            if (origin === 'https://ammaremad-2004.github.io/') {
+                location.href = origin + '/E_Commerce-Website/index.html';
+            } else {
+                location.href = origin + '/index.html';
+            }
         }
 
     </script>
