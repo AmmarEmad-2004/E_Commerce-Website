@@ -15,7 +15,7 @@
         <div class="store-container">
             <nav class="main-nav">
                 <ul class="nav-links">
-                    <li><a :href="navigate()" class="nav-link active">الرئيسية</a></li>
+                    <li id="home"><a href="#" class="nav-link active">الرئيسية</a></li>
                     <li id="auth"><a href="pages/login.html" class="nav-link">تسجيل الدخول</a></li>
                     <li id="auth"><a href="pages/sign_up.html" class="nav-link">إنشاء حساب</a></li>
                 </ul>
@@ -52,6 +52,7 @@
     </div>
     <script type="module" src="js/firebase.config.js"></script>
     <script type="module">
+        import { navigate } from '../js/utils.js';
         import { db } from './js/firebase.config.js';
         import { collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
         document.addEventListener('DOMContentLoaded', async function () {
@@ -64,7 +65,7 @@
             const productsPerPage = 4;
 
             const authLink = document.querySelectorAll("#auth");
-            
+            const homeLink = document.querySelector("#home");
             if (!localStorage.getItem("accessToken")) {
                 authLink.forEach(link => {
                     link.style.display = "block";
@@ -74,7 +75,9 @@
                     link.style.display = "none";
                 });
             }
-
+            homeLink.addEventListener('click', () => {
+                navigate();
+            });
             // Show loading spinner
             showLoadingSpinner();
 
