@@ -1,35 +1,67 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  getDocs, 
+  doc, 
+  updateDoc, 
+  deleteDoc,
+  query,
+  orderBy,
+  where,
+  limit,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDhITyUUeOtqWEM_pDbAl1bxGH49BH2n3Y",
-  authDomain: "e-commerce-382ec.firebaseapp.com",
-  projectId: "e-commerce-382ec",
-  storageBucket: "e-commerce-382ec.firebasestorage.app",
-  messagingSenderId: "688491262101",
-  appId: "1:688491262101:web:b3b97bbc7eecd2729beb9c"
+  apiKey: "AIzaSyDLlGgVCjZBl2Xw1chpJy-ZHvxwvGCKpNk",
+  authDomain: "installments-management.firebaseapp.com",
+  databaseURL: "https://installments-management-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "installments-management",
+  storageBucket: "installments-management.firebasestorage.app",
+  messagingSenderId: "995889248566",
+  appId: "1:995889248566:web:7007fff8171bd32afcdb97",
+  measurementId: "G-JP3ZFKMLXD"
 };
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase services
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export const storage = getStorage(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
 
 // إنشاء موفر مصادقة جوجل
-// const provider = new auth.GoogleAuthProvider();
+const provider = new GoogleAuthProvider();
+
+// Console log for debugging
+console.log("🔥 Firebase initialized successfully");
+console.log("📊 Firestore database:", db);
+console.log("🔐 Auth service:", auth);
 
 
 // تصدير الخدمات لاستخدامها في ملفات أخرى
-
-// Export Firebase functions for use in other files
-export {
+export { 
+  app, 
+  db, 
+  auth, 
+  storage, 
+  provider,
   // Firestore functions
   collection,
   addDoc,
@@ -37,13 +69,19 @@ export {
   doc,
   updateDoc,
   deleteDoc,
-
+  query,
+  orderBy,
+  where,
+  limit,
+  serverTimestamp,
   // Auth functions
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-
+  GoogleAuthProvider,
+  signInWithPopup,
+  updateProfile,
   // Storage functions
   ref,
   uploadBytes,

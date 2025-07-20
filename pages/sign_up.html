@@ -72,9 +72,12 @@
                     updateProfile(userCredential.user, {
                         displayName: name,
                     })
-                    console.log(userCredential.user);
+                    const { user: { accessToken } } = userCredential;
+                    localStorage.setItem("accessToken", accessToken);
+                    alert("✅ تم التسجيل بنجاح");
+                    location.href = 'add_product.html';
                     signupsuccess.innerHTML += "تم التسجيل بنجاح"
-                    setTimeout(() => location.href = window.location.origin, 1500)
+                    // setTimeout(() => location.href = window.location.origin, 1500)
                 }).catch((err) => {
                     switch (err.code) {
                         case 'auth/email-already-in-use':

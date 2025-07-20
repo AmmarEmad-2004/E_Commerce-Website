@@ -1,49 +1,193 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إضافة منتج جديد</title>
     <link rel="stylesheet" href="../styles/add_product.css">
+    <link rel="stylesheet" href="../styles/product_page.css">
+
 </head>
+
 <body>
     <div class="add-product-container">
+        <nav class="main-nav">
+            <ul class="nav-links">
+                <li><a href="/index.html" class="nav-link active">الرئيسية</a></li>
+                <li id="auth"><a href="pages/login.html" class="nav-link">تسجيل الدخول</a></li>
+                <li id="auth"><a href="pages/sign_up.html" class="nav-link">إنشاء حساب</a></li>
+            </ul>
+        </nav>
         <h1 class="title">إضافة منتج جديد</h1>
-        
-        <form>
+
+        <form id="productForm">
             <div class="form-group">
                 <label class="label">اسم المنتج</label>
-                <input type="text" class="input-field">
+                <input type="text" class="input-field" id="productName" required>
             </div>
-            
+
             <div class="form-group">
                 <label class="label">السعر ($)</label>
-                <input type="number" class="input-field price-input">
+                <input type="number" class="input-field price-input" id="productPrice" required>
             </div>
-            
+
             <div class="form-group">
                 <label class="label">الفئة</label>
-                <select class="select-field">
-                    <option value="">إلكترونيات</option>
+                <select class="select-field" id="productCategory" required>
+                    <option value="">اختر الفئة</option>
+                    <option value="electronics">إلكترونيات</option>
                     <option value="clothes">ملابس</option>
                     <option value="books">كتب</option>
                     <option value="home">منزل</option>
                     <option value="sports">رياضة</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label class="label">وصف المنتج</label>
-                <textarea class="textarea-field" rows="4"></textarea>
+                <textarea class="textarea-field" rows="4" id="productDescription" required></textarea>
             </div>
-            
+
             <div class="form-group">
                 <label class="label">صورة المنتج</label>
-                <input type="file" class="file-input">
+                <input type="file" class="file-input" id="productImage">
             </div>
-            
+
             <button type="submit" class="add-btn">إضافة المنتج</button>
         </form>
     </div>
+    <script type="module">
+        import { db, collection, addDoc, serverTimestamp } from '../js/firebase.config.js';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const authLink = document.querySelectorAll("#auth");
+            if (!localStorage.getItem("accessToken")) {
+                authLink.forEach(link => {
+                    link.style.display = "block";
+                });
+            } else {
+                authLink.forEach(link => {
+                    link.style.display = "none";
+                });
+            }
+            console.log("Database instance:", db);
+            console.log("Database type:", typeof db);
+
+            // Test Firebase connection
+            if (!db) {
+                console.error("❌ Firebase database not initialized");
+                alert("خطأ: قاعدة البيانات غير متصلة");
+                return;
+            } else {
+                console.log("✅ Firebase database connected successfully");
+            }
+
+            // ربط النموذج بالدالة
+            document.getElementById("productForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const name = document.getElementById("productName").value;
+                const price = document.getElementById("productPrice").value;
+                const category = document.getElementById("productCategory").value;
+                const description = document.getElementById("productDescription").value;
+                const imageFile = document.getElementById("productImage").files[0];
+
+                if (!imageFile) {
+                    alert("يرجى اختيار صورة للمنتج");
+                    return;
+                }
+
+                // Validate inputs
+                if (!name.trim() || !price || !category || !description.trim()) {
+                    alert("يرجى ملء جميع الحقول المطلوبة");
+                    return;
+                }
+
+                try {
+                    // تحقق من صحة قاعدة البيانات
+                    if (!db) {
+                        throw new Error("قاعدة البيانات غير متاحة");
+                    }
+
+                    console.log("بدء عملية إضافة المنتج...");
+
+                    // رفع الصورة إلى Cloudinary
+                    const cloudName = "dy98sbfoz";
+                    const uploadPreset = "my_unsigned_preset";
+
+                    const formData = new FormData();
+                    formData.append("file", imageFile);
+                    formData.append("upload_preset", uploadPreset);
+
+                    console.log("جاري رفع الصورة...");
+                    const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!uploadRes.ok) {
+                        const errorText = await uploadRes.text();
+                        console.error("Cloudinary error:", errorText);
+                        throw new Error(`فشل رفع الصورة: ${uploadRes.status} ${uploadRes.statusText}`);
+                    }
+
+                    const uploadData = await uploadRes.json();
+
+                    if (!uploadData.secure_url) {
+                        throw new Error("فشل في الحصول على رابط الصورة");
+                    }
+
+                    const imageUrl = uploadData.secure_url;
+                    console.log("تم رفع الصورة بنجاح:", imageUrl);
+
+                    // حفظ المنتج في Firestore
+                    console.log("جاري حفظ المنتج في قاعدة البيانات...");
+
+                    // إنشاء مرجع إلى مجموعة المنتجات
+                    const productsCollectionRef = collection(db, "products");
+
+                    // بيانات المنتج الجديد
+                    const productData = {
+                        name: name.trim(),
+                        description: description.trim(),
+                        price: Number(price),
+                        category: category,
+                        image: imageUrl,
+                        createdAt: serverTimestamp(),
+                        status: "active"
+                    };
+
+                    console.log("بيانات المنتج:", productData);
+
+                    // إضافة المستند إلى المجموعة
+                    const docRef = await addDoc(productsCollectionRef, productData);
+
+                    console.log("تم إنشاء المنتج بنجاح مع المعرف:", docRef.id);
+
+                    // إعادة تعيين النموذج
+                    document.getElementById("productForm").reset();
+                    alert(`✅ تم إضافة المنتج بنجاح\nمعرف المنتج: ${docRef.id}`);
+
+                } catch (error) {
+                    console.error("خطأ أثناء إضافة المنتج:", error);
+
+                    // تحسين رسائل الخطأ
+                    let errorMessage = "حدث خطأ غير متوقع";
+
+                    if (error.code === 'permission-denied') {
+                        errorMessage = "ليس لديك صلاحية لإضافة منتجات";
+                    } else if (error.code === 'unavailable') {
+                        errorMessage = "الخدمة غير متاحة حالياً، يرجى المحاولة لاحقاً";
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+
+                    alert(`❌ فشل في إضافة المنتج: ${errorMessage}`);
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>

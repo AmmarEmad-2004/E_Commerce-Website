@@ -34,9 +34,8 @@
         <div class="social-text">أو سجل باستخدام</div>
 
         <div class="social-buttons">
-            <button onclick="signInWithGoogle" class="social-btn google-btn">G</button>
+            <button class="social-btn google-btn">G</button>
             <button class="social-btn facebook-btn">f</button>
-
         </div>
 
         <div class="signup-text">
@@ -62,8 +61,12 @@
 
             signInWithEmailAndPassword(auth, email, password).then((user) => {
                 console.log(user);
-
-                setTimeout(() => location.href = window.location.origin, 1500);
+                const { user: { accessToken } } = user;
+                console.log("Access Token:", accessToken);
+                localStorage.setItem("accessToken", accessToken);
+                alert("✅ تم تسجيل الدخول بنجاح");
+                location.href = 'add_product.html';
+                // setTimeout(() => navigate(), 1500);
 
             }).catch((error) => {
                 alert(error.message)
@@ -75,7 +78,7 @@
             if (origin === 'https://ammaremad-2004.github.io/') {
                 location.href = origin + '/E_Commerce-Website/index.html';
             } else {
-                location.href = origin + '/index.html';
+                location.href = origin + '/pages/add_product.html';
             }
         }
 

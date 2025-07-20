@@ -15,8 +15,8 @@
             <nav class="main-nav">
                 <ul class="nav-links">
                     <li><a href="index.html" class="nav-link active">الرئيسية</a></li>
-                    <li><a href="pages/login.html" class="nav-link">تسجيل الدخول</a></li>
-                    <li><a href="pages/sign_up.html" class="nav-link">إنشاء حساب</a></li>
+                    <li id="auth"><a href="pages/login.html" class="nav-link">تسجيل الدخول</a></li>
+                    <li id="auth"><a href="pages/sign_up.html" class="nav-link">إنشاء حساب</a></li>
                 </ul>
             </nav>
             <header class="store-header">
@@ -34,7 +34,8 @@
                         <option value="clothes">ملابس</option>
                         <option value="books">كتب</option>
                     </select>
-                    <button class="add-product-btn" onclick="location.href='pages/add_product.html'">+ إضافة منتج</button>
+                    <button class="add-product-btn" onclick="location.href='pages/add_product.html'">+ إضافة
+                        منتج</button>
                 </div>
             </header>
 
@@ -49,21 +50,37 @@
         </div>
     </div>
     <script type="module" src="js/firebase.config.js"></script>
-    <script>
+    <script type="module">
+        import { db } from './js/firebase.config.js';
+        import { collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
         document.addEventListener('DOMContentLoaded', async function () {
+
             const productsGrid = document.querySelector('.products-grid');
             const paginationContainer = document.querySelector('.pagination');
-            
+
             let allProducts = [];
             let currentPage = 1;
             const productsPerPage = 4;
+
+            const authLink = document.querySelectorAll("#auth");
+            
+            if (!localStorage.getItem("accessToken")) {
+                authLink.forEach(link => {
+                    link.style.display = "block";
+                });
+            } else {
+                authLink.forEach(link => {
+                    link.style.display = "none";
+                });
+            }
 
             // Show loading spinner
             showLoadingSpinner();
 
             // Fetch products from API
             try {
-                allProducts = await (await fetch("https://fakestoreapi.com/products")).json();
+                // allProducts = await (await fetch("https://fakestoreapi.com/products")).json();
+                await fetchProducts();
                 hideLoadingSpinner();
                 displayProducts(currentPage);
                 setupPagination();
@@ -71,6 +88,38 @@
                 console.error('Error fetching products:', error);
                 hideLoadingSpinner();
                 productsGrid.innerHTML = '<div class="loading-container"><p class="loading-text">خطأ في تحميل المنتجات</p></div>';
+            }
+
+            async function fetchProducts() {
+                try {
+                    // إنشاء استعلام لجلب المنتجات مرتبة من الأحدث
+                    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+
+                    // تنفيذ الاستعلام
+                    const querySnapshot = await getDocs(q);
+
+                    // مسح المصفوفة الحالية
+                    allProducts = [];
+
+                    // معالجة كل مستند وإضافته للمصفوفة
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        allProducts.push({
+                            id: doc.id,
+                            title: data.name,
+                            description: data.description,
+                            price: data.price,
+                            image: data.image,
+                            category: data.category
+                        });
+                    });
+                    console.log(allProducts);
+
+                } catch (error) {
+                    console.error('Error fetching products from Firebase:', error);
+                    productsGrid.innerHTML = `<div class="loading-container"><p class="loading-text" style="color:red;">حدث خطأ: ${error.message}</p></div>`;
+                    throw error; // Re-throw to be caught by the main try-catch
+                }
             }
 
             function showLoadingSpinner() {
@@ -93,15 +142,15 @@
                 // Add loading effect while switching pages
                 productsGrid.style.opacity = '0.5';
                 productsGrid.style.transition = 'opacity 0.3s ease';
-                
+
                 // Clear current products
                 productsGrid.innerHTML = '';
-                
+
                 // Calculate start and end indices
                 const startIndex = (page - 1) * productsPerPage;
                 const endIndex = startIndex + productsPerPage;
                 const productsToShow = allProducts.slice(startIndex, endIndex);
-
+                console.log(allProducts);
                 // Display products for current page
                 productsToShow.forEach(product => {
                     const productCard = document.createElement('div');
@@ -177,7 +226,7 @@
             function updatePaginationButtons() {
                 const pageButtons = paginationContainer.querySelectorAll('.page-btn');
                 const totalPages = Math.ceil(allProducts.length / productsPerPage);
-                
+
                 pageButtons.forEach((btn, index) => {
                     if (index === 0) { // Previous button
                         btn.disabled = currentPage === 1;
